@@ -24,8 +24,14 @@ const mantrigamRoutes = require('./Routes/mantrigamRoutes');
 app.use('/api/mantrigam', mantrigamRoutes);
 const pariharamRoutes = require('./Routes/pariharamRoutes');
 app.use('/api', pariharamRoutes);
-
-
+const girahamRoutes = require('./Routes/girahamRoutes');
+app.use('/api/girahams', girahamRoutes);
+const prasanamRoutes = require('./Routes/prasanamRoutes');
+app.use('/api/prasanams', prasanamRoutes);
+const thandhirikamRoutes = require('./Routes/thandhirikamRoutes');
+app.use('/api/thandhirikams', thandhirikamRoutes);
+const bookmark =require('./Routes/bookmarkRoutes');
+app.use('/api/bookmark',bookmark);
 
 
 
