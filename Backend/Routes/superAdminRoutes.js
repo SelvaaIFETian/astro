@@ -4,8 +4,10 @@ const router = express.Router();
 const superAdminController = require('../Controllers/superAdminController');
 const userController=require('../Controllers/userController');
 
+
+router.get('/',  userController.getAllUsers); 
 router.post('/signup', superAdminController.signup);
 router.post('/login', superAdminController.login);
 router.post('/create-admin', superAdminController.createAdmin);
-router.get('/',  userController.getAllUsers); 
+
 module.exports = router;
