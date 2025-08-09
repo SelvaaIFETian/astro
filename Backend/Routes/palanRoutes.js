@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const palanController = require('../Controllers/palanController');
-const  authenticateAdmin  = require('../middleware/authMiddleware');
+const  authenticateAdmin  = require('../Middleware/authMiddleware');
 
 // Create Palan
 router.post('/', authenticateAdmin, palanController.createPalan);
