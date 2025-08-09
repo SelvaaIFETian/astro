@@ -7,6 +7,6 @@ const userController = require('../Controllers/userController');
 router.post('/signup', userController.signup);
 router.post('/login', userController.login);
 router.post('/forgot-password', userController.forgotPassword);
-router.put('/update-profile', authenticate, userController.updateProfile);
+router.put('/update-profile', userController.updateProfile);
 
 module.exports = router;
