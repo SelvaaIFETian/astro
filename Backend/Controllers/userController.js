@@ -83,7 +83,10 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // 📜 Get All Users
+=======
+>>>>>>> 444ee30faab778304e53189020e6d6a283a06a49
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
@@ -93,4 +96,8 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Fetching users failed', error: error.message });
   }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 444ee30faab778304e53189020e6d6a283a06a49
