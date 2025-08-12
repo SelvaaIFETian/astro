@@ -1,3 +1,4 @@
+require('dotenv').config(); // Load .env before anything else
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
@@ -7,13 +8,8 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
-<<<<<<< HEAD
-    
-    logging: false
-=======
-    dialect: process.env.DB_DIALECT,
+    dialect: process.env.DB_DIALECT || 'postgres', // Make sure dialect is set
     logging: false,
->>>>>>> 444ee30faab778304e53189020e6d6a283a06a49
   }
 );
 
