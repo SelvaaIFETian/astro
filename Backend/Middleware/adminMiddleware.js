@@ -1,18 +1,24 @@
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-exports.authenticateAdmin = (req, res, next) => {
-  const token = req.header('Authorization')?.split(" ")[1];
-  if (!token) return res.status(401).json({ message: 'No token, authorization denied' });
+const authenticateAdmin = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
 
+  const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
     if (decoded.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied. Not an admin.' });
+      return res.status(403).json({ message: 'Access denied' });
     }
-    req.admin = decoded; // you can access admin info via req.admin
+
+    req.adminId = decoded.adminId; // ✅ This is what checkModulePermission uses
     next();
   } catch (err) {
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: 'Invalid token', error: err.message });
   }
 };
+
+module.exports = { authenticateAdmin };

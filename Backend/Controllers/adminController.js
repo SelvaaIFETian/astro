@@ -8,7 +8,7 @@ const Join = require('../Models/Join'); // Adjust the path as needed
 const ThreeJoin = require('../Models/ThreeJoin');
 const Sin = require('../Models/Sin');
 const Thosham = require('../Models/Thosham');
-
+const PermissionRequest = require('../Models/PermissionRequest');
 
 
 
@@ -32,6 +32,28 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error('Admin Login Error:', error);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.requestAccess = async (req, res) => {
+  try {
+    const { moduleName } = req.body;
+    const adminId = req.adminId; // from JWT
+
+    // Check if already approved
+    const existingRequest = await PermissionRequest.findOne({
+      where: { adminId, moduleName, status: 'pending' }
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({ message: 'Request already pending' });
+    }
+
+    await PermissionRequest.create({ adminId, moduleName });
+
+    res.json({ message: 'Permission request submitted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Request access failed', error: err.message });
   }
 };
 

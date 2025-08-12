@@ -3,6 +3,8 @@ const SuperAdmin = require('../Models/SuperAdmin');
 const Admin =require('../Models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const AdminPermission = require('../Models/AdminPermission');
+const PermissionRequest = require('../Models/PermissionRequest');
 
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -46,5 +48,24 @@ exports.createAdmin = async (req, res) => {
     res.json({ message: 'Admin created successfully', data: newAdmin });
   } catch (err) {
     res.status(500).json({ error: 'Admin creation failed', details: err.message });
+  }
+};
+
+exports.grantAccess = async (req, res) => {
+  try {
+    const { adminId, moduleName } = req.body;
+
+    // Insert into permissions
+    await AdminPermission.create({ adminId, moduleName });
+
+    // Update request status
+    await PermissionRequest.update(
+      { status: 'approved' },
+      { where: { adminId, moduleName, status: 'pending' } }
+    );
+
+    res.json({ message: `Access granted for module ${moduleName}` });
+  } catch (err) {
+    res.status(500).json({ message: 'Grant access failed', error: err.message });
   }
 };

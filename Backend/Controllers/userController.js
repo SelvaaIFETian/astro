@@ -82,3 +82,15 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Profile update failed', error: error.message });
   }
 };
+
+// 📜 Get All Users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] } // hide password from response
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Fetching users failed', error: error.message });
+  }
+};
