@@ -23,6 +23,11 @@ router.post('/raasi',
   checkModulePermission,
   adminController.createRaasiPost
 );
+router.delete('/raasi/:postId', authenticateAdmin, adminController.deleteRaasiPost);
+router.put('/raasi/:postId', authenticateAdmin, adminController.updateRaasiPost);
+router.get('/raasi', adminController.getAllRaasiPosts);
+router.get('/raasi/post/:postId', adminController.getRaasiPostByPostId);
+router.get('/raasi/raasi/:raasiId', adminController.getRaasiPostsByRaasiId);
 
 // ===== Star =====
 router.post('/star',
@@ -35,6 +40,97 @@ router.post('/star',
   checkModulePermission,
   adminController.createStarPost
 );
+router.delete('/star/:postId', authenticateAdmin, adminController.deleteStarPost);
+router.put('/star/:postId', authenticateAdmin, adminController.updateStarPost);
+router.get('/star', adminController.getAllStarPosts);
+router.get('/star/post/:postId', adminController.getStarPostByPostId);
+router.get('/star/star/:starId', adminController.getStarPostsByStarId);
+
+// ===== Laknam =====
+router.post('/laknam',
+  authenticateAdmin,
+  (req, res, next) => {
+    req.body.moduleName = 'Laknam';
+    req.body.moduleId = req.body.laknamId;
+    next();
+  },
+  checkModulePermission,
+  adminController.createLaknamPost
+);
+router.delete('/laknam/:postId', authenticateAdmin, adminController.deleteLaknamPost);
+router.put('/laknam/:postId', authenticateAdmin, adminController.updateLaknamPost);
+router.get('/laknam', adminController.getAllLaknamPosts);
+router.get('/laknam/post/:postId', adminController.getLaknamPostByPostId);
+router.get('/laknam/laknam/:laknamId', adminController.getLaknamPostsByLaknamId);
+
+// ===== Join =====
+router.post('/join',
+  authenticateAdmin,
+  (req, res, next) => {
+    req.body.moduleName = 'Join';
+    req.body.moduleId = req.body.JoinId;
+    next();
+  },
+  checkModulePermission,
+  adminController.createJoinPost
+);
+router.delete('/join/:postId', authenticateAdmin, adminController.deleteJoinPost);
+router.put('/join/:postId', authenticateAdmin, adminController.updateJoinPost);
+router.get('/join', adminController.getAllJoinPosts);
+router.get('/join/post/:postId', adminController.getJoinPostByPostId);
+router.get('/join/join/:JoinId', adminController.getJoinPostsByJoinId);
+
+// ===== ThreeJoin =====
+router.post('/threejoin',
+  authenticateAdmin,
+  (req, res, next) => {
+    req.body.moduleName = 'ThreeJoin';
+    req.body.moduleId = req.body.threeJoinId;
+    next();
+  },
+  checkModulePermission,
+  adminController.createThreeJoinPost
+);
+router.delete('/threejoin/:postId', authenticateAdmin, adminController.deleteThreeJoinPost);
+router.put('/threejoin/:postId', authenticateAdmin, adminController.updateThreeJoinPost);
+router.get('/threejoin', adminController.getAllThreeJoinPosts);
+router.get('/threejoin/post/:postId', adminController.getThreeJoinPostByPostId);
+router.get('/threejoin/threejoin/:threeJoinId', adminController.getThreeJoinPostsByThreeJoinId);
+
+// ===== Sin =====
+router.post('/sin',
+  authenticateAdmin,
+  (req, res, next) => {
+    req.body.moduleName = 'Sin';
+    req.body.moduleId = req.body.sinId;
+    next();
+  },
+  checkModulePermission,
+  adminController.createSinPost
+);
+router.delete('/sin/:postId', authenticateAdmin, adminController.deleteSinPost);
+router.put('/sin/:postId', authenticateAdmin, adminController.updateSinPost);
+router.get('/sin', adminController.getAllSinPosts);
+router.get('/sin/post/:postId', adminController.getSinPostByPostId);
+router.get('/sin/sin/:sinId', adminController.getSinPostsBySinId);
+
+// ===== Thosham =====
+router.post('/thosham',
+  authenticateAdmin,
+  (req, res, next) => {
+    req.body.moduleName = 'Thosham';
+    req.body.moduleId = req.body.thoshamId;
+    next();
+  },
+  checkModulePermission,
+  adminController.createThosham
+);
+router.delete('/thosham/:id', authenticateAdmin, adminController.deleteThosham);
+router.put('/thosham/:id', authenticateAdmin, adminController.updateThosham);
+router.get('/thosham', authenticateAdmin, adminController.getAllThosham);
+router.get('/thosham/:id', authenticateAdmin, adminController.getThoshamById);
+
+module.exports = router;);
 
 // ===== Laknam =====
 router.post('/laknam',
