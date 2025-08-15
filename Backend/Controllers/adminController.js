@@ -210,11 +210,11 @@ exports.getStarPostsByStarId = async (req, res) => {
 
   exports.createLaknamPost = async (req, res) => {
     try {
-      const { moduleId, content, type,adminId } = req.body;
+      const { laknamd, content, type,adminId } = req.body;
       // const adminId = req.admin.id;
       const moduleName = 'laknam';
 
-      const post = await Laknam.create({moduleName, moduleId, content, type, adminId });
+      const post = await Laknam.create({laknamId, content, type, adminId });
       res.status(201).json(post);
     } catch (err) {
       res.status(500).json({ message: 'Error creating Laknam post', error: err.message });
