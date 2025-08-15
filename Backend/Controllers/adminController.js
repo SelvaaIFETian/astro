@@ -136,8 +136,8 @@ exports.getRaasiPostsByRaasiId = async (req, res) => {
 
 exports.createStarPost = async (req, res) => {
   try {
-    const { starId, description, type,adminId } = req.body;
-    // const adminId = req.admin.id;
+    const { starId, description, type } = req.body;
+    const adminId = req.admin.id;
 
     const post = await Star.create({ starId, description, type, adminId });
     res.status(201).json(post);
@@ -284,8 +284,8 @@ exports.getLaknamPostsByLaknamId = async (req, res) => {
 
 exports.createJoinPost = async (req, res) => {
   try {
-    const { JoinId, description, postId ,adminId} = req.body;
-    // const adminId = req.user.id;
+    const { JoinId, description, postId } = req.body;
+    const adminId = req.user.id;
     const post = await Join.create({ JoinId, description, postId, adminId });
     res.json(post);
   } catch (err) {
@@ -409,7 +409,8 @@ exports.deleteThreeJoinPost = async (req, res) => {
 
 exports.createSinPost = async (req, res) => {
   try {
-    const { postId, adminId, description, sinId } = req.body;
+    const { postId, description, sinId } = req.body;
+     const adminId = req.adminId;
      if (!postId || !adminId || !description || !sinId) {
       return res.status(400).json({ message: 'All fields are required' });
     }
