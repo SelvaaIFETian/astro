@@ -210,8 +210,8 @@ exports.getStarPostsByStarId = async (req, res) => {
 
   exports.createLaknamPost = async (req, res) => {
     try {
-      const { Laknamd, content, type,adminId } = req.body;
-      // const adminId = req.admin.id;
+      const { LaknamId, content, type } = req.body;
+      const adminId = req.admin.id;
       const moduleName = 'laknam';
 
       const post = await Laknam.create({LaknamId, content, type, adminId });
