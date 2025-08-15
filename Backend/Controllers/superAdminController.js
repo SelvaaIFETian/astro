@@ -50,7 +50,7 @@ exports.createAdminAndGrantAccess = async (req, res) => {
 
     // Step 2: Loop over access object and create AdminPermission rows
     const permissions = [];
-    for (const [moduleName, moduleId] of Object.entries(access)) {
+    for (const { moduleName, moduleId } of access) {
       const perm = await AdminPermission.create({
         adminId: newAdmin.id,
         moduleName,
