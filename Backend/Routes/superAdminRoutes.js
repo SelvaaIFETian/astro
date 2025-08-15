@@ -10,8 +10,10 @@ const { authenticateSuperAdmin } = require('../Middleware/superAdminMiddleware')
 router.get('/',  userController.getAllUsers); 
 router.post('/signup', superAdminController.signup);
 router.post('/login', superAdminController.login);
-router.post('/create-admin', superAdminController.createAdmin);
+router.post('/create-admin', authenticateSuperAdmin,superAdminController.createAdminAndGrantAccess);
 router.get('/',  userController.getAllUsers); 
-router.post('/grant-access', authenticateSuperAdmin, superAdminController.grantAccess);
+router.post('/add-access',superAdminController.addAdminPermission);
+router.post('/remove-access',superAdminController.removeAdminPermission);
+// router.post('/grant-access', authenticateSuperAdmin, superAdminController.grantAccess);
 
 module.exports = router;

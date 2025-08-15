@@ -40,32 +40,139 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.createAdmin = async (req, res) => {
+exports.createAdminAndGrantAccess = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, access } = req.body; // access = { laknam: 1, pariharam: 2 }
+
+    // Step 1: Create admin
     const hashed = await bcrypt.hash(password, 10);
     const newAdmin = await Admin.create({ name, email, password: hashed });
-    res.json({ message: 'Admin created successfully', data: newAdmin });
+
+    // Step 2: Loop over access object and create AdminPermission rows
+    const permissions = [];
+    for (const [moduleName, moduleId] of Object.entries(access)) {
+      const perm = await AdminPermission.create({
+        adminId: newAdmin.id,
+        moduleName,
+        moduleId
+      });
+      permissions.push(perm);
+
+      // Step 3: Create individual PermissionRequest with status 'approved'
+      await PermissionRequest.create({
+        adminId: newAdmin.id,
+        moduleName,
+        moduleId,
+        status: 'approved'
+      });
+    }
+
+    res.json({
+      message: `Admin created and granted access for modules: ${Object.keys(access).join(", ")}`,
+      admin: newAdmin,
+      permissions
+    });
+
   } catch (err) {
-    res.status(500).json({ error: 'Admin creation failed', details: err.message });
+    res.status(500).json({
+      error: 'Operation failed',
+      details: err.message
+    });
   }
 };
 
-exports.grantAccess = async (req, res) => {
+
+exports.addAdminPermission = async (req, res) => {
   try {
-    const { adminId, moduleName } = req.body;
+    const { adminId, permissions } = req.body;
+    // permissions format: [{ moduleName: 'raasi', moduleId: 2 }, { moduleName: 'raasi', moduleId: 4 }]
 
-    // Insert into permissions
-    await AdminPermission.create({ adminId, moduleName });
+    const added = [];
 
-    // Update request status
-    await PermissionRequest.update(
-      { status: 'approved' },
-      { where: { adminId, moduleName, status: 'pending' } }
-    );
+    for (const { moduleName, moduleId } of permissions) {
+      const existing = await AdminPermission.findOne({
+        where: { adminId, moduleName, moduleId }
+      });
 
-    res.json({ message: `Access granted for module ${moduleName}` });
+      if (!existing) {
+        await AdminPermission.create({ adminId, moduleName, moduleId });
+
+        await PermissionRequest.upsert({
+          adminId,
+          moduleName,
+          moduleId,
+          status: 'approved'
+        });
+
+        added.push({ moduleName, moduleId });
+      }
+    }
+
+    res.status(200).json({
+      message: 'Permissions added successfully',
+      added
+    });
+
   } catch (err) {
-    res.status(500).json({ message: 'Grant access failed', error: err.message });
+    res.status(500).json({
+      message: 'Failed to add permissions',
+      error: err.message
+    });
   }
 };
+
+
+exports.removeAdminPermission = async (req, res) => {
+  try {
+    const { adminId, permissions } = req.body;
+    // permissions format: [{ moduleName: 'raasi', moduleId: 2 }]
+
+    const removed = [];
+
+    for (const { moduleName, moduleId } of permissions) {
+      const permDeleted = await AdminPermission.destroy({
+        where: { adminId, moduleName, moduleId }
+      });
+
+      const reqDeleted = await PermissionRequest.destroy({
+        where: { adminId, moduleName, moduleId }
+      });
+
+      if (permDeleted || reqDeleted) {
+        removed.push({ moduleName, moduleId });
+      }
+    }
+
+    res.status(200).json({
+      message: 'Permissions removed successfully',
+      removed
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: 'Failed to remove permissions',
+      error: err.message
+    });
+  }
+};
+
+
+
+// exports.grantAccess = async (req, res) => {
+//   try {
+//     const { adminId, moduleName } = req.body;
+
+//     // Insert into permissions
+//     await AdminPermission.create({ adminId, moduleName });
+
+//     // Update request status
+//     await PermissionRequest.update(
+//       { status: 'approved' },
+//       { where: { adminId, moduleName, status: 'pending' } }
+//     );
+
+//     res.json({ message: `Access granted for module ${moduleName}` });
+//   } catch (err) {
+//     res.status(500).json({ message: 'Grant access failed', error: err.message });
+//   }
+// };

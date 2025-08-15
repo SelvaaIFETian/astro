@@ -14,11 +14,16 @@ router.post(
 
 // ===== Raasi =====
 router.post('/raasi',
-  authenticateAdmin,
-  (req, res, next) => { req.body.moduleName = 'Raasi'; next(); },
+  authenticateAdmin,  // ✅ sets req.admin
+  (req, res, next) => {
+    req.body.moduleName = 'Raasi';
+    req.body.moduleId = req.body.raasiId; // ✅ required for permission check
+    next();
+  },
   checkModulePermission,
   adminController.createRaasiPost
 );
+
 router.delete('/raasi/:postId', authenticateAdmin, adminController.deleteRaasiPost);
 router.put('/raasi/:postId', authenticateAdmin, adminController.updateRaasiPost);
 router.get('/raasi', adminController.getAllRaasiPosts);

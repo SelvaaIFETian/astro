@@ -59,8 +59,8 @@ exports.requestAccess = async (req, res) => {
 
 exports.createRaasiPost = async (req, res) => {
   try {
-    const { raasiId, content , adminId ,type} = req.body;
-    // const adminId = req.admin.id; // from auth middleware
+    const { raasiId, content  ,type} = req.body;
+    const adminId = req.admin.id; // from auth middleware
 
     const post = await Raasi.create({ raasiId, content, adminId,type });
     res.json(post);
@@ -208,17 +208,18 @@ exports.getStarPostsByStarId = async (req, res) => {
 };
 
 
-exports.createLaknamPost = async (req, res) => {
-  try {
-    const { LaknamId, content, type,adminId } = req.body;
-    // const adminId = req.admin.id;
+  exports.createLaknamPost = async (req, res) => {
+    try {
+      const { moduleId, content, type,adminId } = req.body;
+      // const adminId = req.admin.id;
+      const moduleName = 'laknam';
 
-    const post = await Laknam.create({ LaknamId, content, type, adminId });
-    res.status(201).json(post);
-  } catch (err) {
-    res.status(500).json({ message: 'Error creating Laknam post', error: err.message });
-  }
-};
+      const post = await Laknam.create({moduleName, moduleId, content, type, adminId });
+      res.status(201).json(post);
+    } catch (err) {
+      res.status(500).json({ message: 'Error creating Laknam post', error: err.message });
+    }
+  };
 
 // 🗑️ Delete
 exports.deleteLaknamPost = async (req, res) => {
