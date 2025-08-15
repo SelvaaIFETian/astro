@@ -68,7 +68,7 @@ router.post('/join',
   authenticateAdmin,
   (req, res, next) => {
     req.body.moduleName = 'Join';
-    req.body.moduleId =  String(req.body.moduleId);
+    req.body.moduleId =  req.body.moduleId;
     next();
   },
   checkModulePermission,
