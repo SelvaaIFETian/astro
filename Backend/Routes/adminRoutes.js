@@ -130,7 +130,7 @@ router.put('/thosham/:id', authenticateAdmin, adminController.updateThosham);
 router.get('/thosham', authenticateAdmin, adminController.getAllThosham);
 router.get('/thosham/:id', authenticateAdmin, adminController.getThoshamById);
 
-module.exports = router;);
+// module.exports = router;);
 
 // ===== Laknam =====
 router.post('/laknam',
