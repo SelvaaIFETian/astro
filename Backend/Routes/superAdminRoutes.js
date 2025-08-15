@@ -14,6 +14,8 @@ router.post('/create-admin', authenticateSuperAdmin,superAdminController.createA
 router.get('/',  userController.getAllUsers); 
 router.post('/add-access',superAdminController.addAdminPermission);
 router.post('/remove-access',superAdminController.removeAdminPermission);
+router.get('/admins', superAdminController.getAllAdmins);
+router.get('/superadmins', superAdminController.getAllSuperAdmins);
 // router.post('/grant-access', authenticateSuperAdmin, superAdminController.grantAccess);
 
 module.exports = router;

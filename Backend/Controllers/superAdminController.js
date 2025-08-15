@@ -157,6 +157,31 @@ exports.removeAdminPermission = async (req, res) => {
 };
 
 
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await Admin.findAll({
+      attributes: { exclude: ['password'] } // hide password for security
+    });
+    res.status(200).json({ admins });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch admins', error: err.message });
+  }
+};
+
+
+
+exports.getAllSuperAdmins = async (req, res) => {
+  try {
+    const superAdmins = await SuperAdmin.findAll({
+      attributes: { exclude: ['password'] } // hide password
+    });
+    res.status(200).json({ superAdmins });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch super admins', error: err.message });
+  }
+};
+
+
 
 // exports.grantAccess = async (req, res) => {
 //   try {
