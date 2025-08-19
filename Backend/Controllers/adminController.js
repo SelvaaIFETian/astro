@@ -216,8 +216,8 @@ exports.bulkUploadRaasi = async (req, res) => {
 
 exports.createStarPost = async (req, res) => {
   try {
-    const { starId, description, type,adminId } = req.body;
-    // const adminId = req.admin.id;
+    const { starId, description, type } = req.body;
+    const adminId = req.admin.id;
 
     const post = await Star.create({ starId, description, type, adminId });
     res.status(201).json(post);
@@ -364,8 +364,8 @@ exports.bulkUploadStar = async (req, res) => {
 
   exports.createLaknamPost = async (req, res) => {
     try {
-      const { LaknamId, content, type,adminId } = req.body;
-      // const adminId = req.admin.id;
+      const { LaknamId, content, type } = req.body;
+      const adminId = req.admin.id;
       const moduleName = 'laknam';
 
       const post = await Laknam.create({LaknamId, content, type, adminId });
@@ -511,8 +511,8 @@ exports.bulkUploadLaknam = async (req, res) => {
 
 exports.createJoinPost = async (req, res) => {
   try {
-    const { JoinId, description, postId ,adminId} = req.body;
-    // const adminId = req.user.id;
+    const { JoinId, description, postId } = req.body;
+    const adminId = req.user.id;
     const post = await Join.create({ JoinId, description, postId, adminId });
     res.json(post);
   } catch (err) {
@@ -708,7 +708,8 @@ exports.deleteThreeJoinPost = async (req, res) => {
 
 exports.createSinPost = async (req, res) => {
   try {
-    const { postId, adminId, description, sinId } = req.body;
+    const { postId, adminId, description } = req.body;
+    const adminId = req.admin.adminId;
      if (!postId || !adminId || !description || !sinId) {
       return res.status(400).json({ message: 'All fields are required' });
     }
