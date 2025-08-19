@@ -21,7 +21,7 @@ const authenticateAdmin = (req, res, next) => {
 
     // ✅ Attach decoded admin data to request
     req.admin = {
-      adminId: decoded.adminId,
+      id: decoded.adminId,
       email: decoded.email, // if you include email in your token
       role: decoded.role
     };
