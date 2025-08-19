@@ -3,7 +3,7 @@ const sequelize = require('../db');
 
 const Join = sequelize.define('Join', {
   JoinId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false
   },
   description: {

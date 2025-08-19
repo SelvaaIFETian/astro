@@ -9,6 +9,9 @@ const ThreeJoin = require('../Models/ThreeJoin');
 const Sin = require('../Models/Sin');
 const Thosham = require('../Models/Thosham');
 const PermissionRequest = require('../Models/PermissionRequest');
+const { IncomingForm } = require('formidable');
+const XLSX = require('xlsx');
+// const Raasi = require('../Models/Raasi');
 
 
 
@@ -108,6 +111,16 @@ exports.getAllRaasiPosts = async (req, res) => {
   }
 };
 
+exports.getRaasiPostsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const posts = await Raasi.findAll({ where: { adminId } });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching Raasi posts by adminId', error: err.message });
+  }
+};
+
 // Get Post by Post ID
 exports.getRaasiPostByPostId = async (req, res) => {
   try {
@@ -134,6 +147,73 @@ exports.getRaasiPostsByRaasiId = async (req, res) => {
   }
 };
 
+exports.bulkUploadRaasi = async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
+    }
+
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
+    }
+
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const adminId = req.admin.id;
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
+      const success = [];
+      const failed = [];
+
+      for (const row of rows) {
+        const { raasiId, type, content } = row;
+
+        if (
+          !raasiId || raasiId < 1 || raasiId > 12 ||
+          !content ||
+          (type && !validTypes.includes(type))
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
+          continue;
+        }
+
+        try {
+         
+          const raasiPost = await Raasi.create({
+            raasiId,
+            type: type || null,
+            content,
+            adminId
+          });
+          success.push(raasiPost);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      console.log('Uploaded File:', files.excel);
+
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
+};
+
+
 exports.createStarPost = async (req, res) => {
   try {
     const { starId, description, type,adminId } = req.body;
@@ -145,6 +225,17 @@ exports.createStarPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Star post', error: err.message });
   }
 };
+
+exports.getStarPostsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const posts = await Star.findAll({ where: { adminId } });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching Star posts by adminId', error: err.message });
+  }
+};
+
 
 // 🗑️ Delete
 exports.deleteStarPost = async (req, res) => {
@@ -207,19 +298,93 @@ exports.getStarPostsByStarId = async (req, res) => {
   }
 };
 
+exports.bulkUploadStar = async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
+    }
+
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
+    }
+
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const adminId = req.admin.id;
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
+      const success = [];
+      const failed = [];
+
+      for (const row of rows) {
+        const { starId, type, description } = row;
+
+        if (
+          !starId || starId < 1 || starId > 27 ||
+          !type || !validTypes.includes(type)
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
+          continue;
+        }
+
+        try {
+          const post = await Star.create({
+            starId,
+            type,
+            description: description || null,
+            adminId
+          });
+          success.push(post);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      console.log('Uploaded File:', files.excel);
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
+};
+
 
   exports.createLaknamPost = async (req, res) => {
     try {
-      const { moduleId, content, type,adminId } = req.body;
+      const { LaknamId, content, type,adminId } = req.body;
       // const adminId = req.admin.id;
       const moduleName = 'laknam';
 
-      const post = await Laknam.create({moduleName, moduleId, content, type, adminId });
+      const post = await Laknam.create({LaknamId, content, type, adminId });
       res.status(201).json(post);
     } catch (err) {
       res.status(500).json({ message: 'Error creating Laknam post', error: err.message });
     }
   };
+
+  exports.getLaknamPostsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const posts = await Laknam.findAll({ where: { adminId } });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching Laknam posts by adminId', error: err.message });
+  }
+};
+
 
 // 🗑️ Delete
 exports.deleteLaknamPost = async (req, res) => {
@@ -281,6 +446,68 @@ exports.getLaknamPostsByLaknamId = async (req, res) => {
     res.status(500).json({ message: 'Error fetching posts by starId', error: err.message });
   }
 };
+exports.bulkUploadLaknam = async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
+    }
+
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
+    }
+
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const adminId = req.admin.id;
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
+      const success = [];
+      const failed = [];
+
+      for (const row of rows) {
+        const { LaknamId, type, content } = row;
+
+        if (
+          !LaknamId || LaknamId < 1 || LaknamId > 12 ||
+          (type && !validTypes.includes(type))
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
+          continue;
+        }
+
+        try {
+          const post = await Laknam.create({
+            LaknamId,
+            type: type || null,
+            content: content || null,
+            adminId
+          });
+          success.push(post);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
+};
+
 
 exports.createJoinPost = async (req, res) => {
   try {
@@ -292,6 +519,16 @@ exports.createJoinPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Join post', error: err.message });
   }
 };
+exports.getJoinPostsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const posts = await Join.findAll({ where: { adminId } });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching Join posts by adminId', error: err.message });
+  }
+};
+
 
 // Get All Join Posts
 exports.getAllJoinPosts = async (req, res) => {
@@ -343,6 +580,68 @@ exports.deleteJoinPost = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Error deleting Join post', error: err.message });
   }
+};
+
+exports.bulkUploadJoin = async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
+    }
+
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
+    }
+
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const adminId = req.admin.id;
+      const success = [];
+      const failed = [];
+
+      for (const row of rows) {
+        const { JoinId, description, postId } = row;
+
+        if (
+          !JoinId || typeof JoinId !== 'number' ||
+          !description || typeof description !== 'string' ||
+          !postId || typeof postId !== 'string'
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
+          continue;
+        }
+
+        try {
+          const post = await Join.create({
+            JoinId,
+            description,
+            postId,
+            adminId,
+          });
+          success.push(post);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
 };
 
 // CREATE ThreeJoin Post
@@ -419,6 +718,16 @@ exports.createSinPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Sin post', error: error.message });
   }
 };
+exports.getSinPostsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;
+    const posts = await Sin.findAll({ where: { adminId } });
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching Sin posts by adminId', error: err.message });
+  }
+};
+
 
 // Get all Sin posts
 exports.getAllSinPosts = async (req, res) => {
