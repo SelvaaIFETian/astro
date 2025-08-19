@@ -113,7 +113,7 @@ exports.getAllRaasiPosts = async (req, res) => {
 
 exports.getRaasiPostsByAdminId = async (req, res) => {
   try {
-    const { adminId } = req.params;
+     const adminId = req.admin.id;
     const posts = await Raasi.findAll({ where: { adminId } });
     res.json(posts);
   } catch (err) {
@@ -228,7 +228,7 @@ exports.createStarPost = async (req, res) => {
 
 exports.getStarPostsByAdminId = async (req, res) => {
   try {
-    const { adminId } = req.params;
+     const adminId = req.admin.id;
     const posts = await Star.findAll({ where: { adminId } });
     res.json(posts);
   } catch (err) {
@@ -377,7 +377,7 @@ exports.bulkUploadStar = async (req, res) => {
 
   exports.getLaknamPostsByAdminId = async (req, res) => {
   try {
-    const { adminId } = req.params;
+    const adminId = req.admin.id;
     const posts = await Laknam.findAll({ where: { adminId } });
     res.json(posts);
   } catch (err) {
@@ -521,7 +521,7 @@ exports.createJoinPost = async (req, res) => {
 };
 exports.getJoinPostsByAdminId = async (req, res) => {
   try {
-    const { adminId } = req.params;
+     const adminId = req.admin.id;
     const posts = await Join.findAll({ where: { adminId } });
     res.json(posts);
   } catch (err) {
@@ -721,7 +721,7 @@ exports.createSinPost = async (req, res) => {
 };
 exports.getSinPostsByAdminId = async (req, res) => {
   try {
-    const { adminId } = req.params;
+ const adminId = req.admin.id;
     const posts = await Sin.findAll({ where: { adminId } });
     res.json(posts);
   } catch (err) {
