@@ -708,7 +708,7 @@ exports.deleteThreeJoinPost = async (req, res) => {
 
 exports.createSinPost = async (req, res) => {
   try {
-    const { postId, adminId, description } = req.body;
+    const { postId, description } = req.body;
     const adminId = req.admin.adminId;
      if (!postId || !adminId || !description || !sinId) {
       return res.status(400).json({ message: 'All fields are required' });
