@@ -28,7 +28,7 @@ router.put('/raasi/:postId', authenticateAdmin, adminController.updateRaasiPost)
 router.get('/raasi', adminController.getAllRaasiPosts);
 router.get('/raasi/post/:postId', adminController.getRaasiPostByPostId);
 router.get('/raasi/raasi/:raasiId', adminController.getRaasiPostsByRaasiId);
-router.get('/raasi/admin/adminId', adminController.getRaasiPostsByAdminId); // 🔍 added
+router.get('/raasi/admin/adminId', authenticateAdmin, adminController.getRaasiPostsByAdminId); // 🔍 added
 router.post('/raasi/bulk-upload', authenticateAdmin, adminController.bulkUploadRaasi);
 
 // ===== Star =====
@@ -47,7 +47,7 @@ router.put('/star/:postId', authenticateAdmin, adminController.updateStarPost);
 router.get('/star', adminController.getAllStarPosts);
 router.get('/star/post/:postId', adminController.getStarPostByPostId);
 router.get('/star/star/:starId', adminController.getStarPostsByStarId);
-router.get('/star/admin/adminId', adminController.getStarPostsByAdminId); // 🔍 added
+router.get('/star/admin/adminId',authenticateAdmin,  adminController.getStarPostsByAdminId); // 🔍 added
 router.post('/star/bulk-upload', authenticateAdmin, adminController.bulkUploadStar);
 
 // ===== Laknam =====
@@ -66,7 +66,7 @@ router.put('/laknam/:postId', authenticateAdmin, adminController.updateLaknamPos
 router.get('/laknam', adminController.getAllLaknamPosts);
 router.get('/laknam/post/:postId', adminController.getLaknamPostByPostId);
 router.get('/laknam/laknam/:laknamId', adminController.getLaknamPostsByLaknamId);
-router.get('/laknam/admin/adminId', adminController.getLaknamPostsByAdminId); // 🔍 added
+router.get('/laknam/admin/adminId',authenticateAdmin,  adminController.getLaknamPostsByAdminId); // 🔍 added
 router.post('/laknam/bulk-upload', authenticateAdmin, adminController.bulkUploadLaknam);
 
 // ===== Join =====
@@ -85,7 +85,7 @@ router.put('/join/:postId', authenticateAdmin, adminController.updateJoinPost);
 router.get('/join', adminController.getAllJoinPosts);
 router.get('/join/post/:postId', adminController.getJoinPostByPostId);
 router.get('/join/join/:JoinId', adminController.getJoinPostsByJoinId);
-router.get('/join/admin/adminId', adminController.getJoinPostsByAdminId); // 🔍 added
+router.get('/join/admin/adminId',authenticateAdmin,  adminController.getJoinPostsByAdminId); // 🔍 added
 router.post('/join/bulk-upload', authenticateAdmin, adminController.bulkUploadJoin);
 
 // ===== ThreeJoin =====
@@ -122,7 +122,7 @@ router.put('/sin/:postId', authenticateAdmin, adminController.updateSinPost);
 router.get('/sin', adminController.getAllSinPosts);
 router.get('/sin/post/:postId', adminController.getSinPostByPostId);
 router.get('/sin/sin/:sinId', adminController.getSinPostsBySinId);
-router.get('/sin/admin/adminId', adminController.getSinPostsByAdminId); // 🔍 added
+router.get('/sin/admin/adminId',authenticateAdmin,  adminController.getSinPostsByAdminId); // 🔍 added
 
 // ===== Thosham =====
 router.post('/thosham',
