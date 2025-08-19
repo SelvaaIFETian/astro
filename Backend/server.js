@@ -36,7 +36,7 @@ app.use('/api/bookmark',bookmark);
 
 
 // 🛠️ Alter DB schema to match updated models
-sequelize.sync({force:true}).then(() => {
+sequelize.sync({alter:true}).then(() => {
   app.listen(5001, () => console.log('✅ Server running on port 5001 & DB synced'));
 }).catch((err) => {
   console.error('❌ DB sync failed:', err);
