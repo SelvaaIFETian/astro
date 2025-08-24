@@ -5,6 +5,7 @@ const { authenticateAdmin } = require('../Middleware/adminMiddleware');
 const checkModulePermission = require('../Middleware/checkModulePermission');
 
 // ===== Auth =====
+router.get('/access/:adminId',adminController.getPermissionsByAdminId);
 router.post('/login', adminController.login);
 router.post(
   '/request-access',
