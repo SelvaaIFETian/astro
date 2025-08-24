@@ -13,7 +13,7 @@ const { IncomingForm } = require('formidable');
 const XLSX = require('xlsx');
 // const Raasi = require('../Models/Raasi');
 
-const AdminPermission = require('../models/AdminPermission');
+const AdminPermission = require('../Models/AdminPermission');
 
 exports.getPermissionsByAdminId = async (req, res) => {
   try {
