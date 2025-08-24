@@ -13,6 +13,34 @@ const { IncomingForm } = require('formidable');
 const XLSX = require('xlsx');
 // const Raasi = require('../Models/Raasi');
 
+const AdminPermission = require('../models/AdminPermission');
+
+exports.getPermissionsByAdminId = async (req, res) => {
+  try {
+    const { adminId } = req.params;  // assuming you pass adminId in URL like /permissions/:adminId
+
+    if (!adminId) {
+      return res.status(400).json({ message: 'Admin ID is required' });
+    }
+
+    const permissions = await AdminPermission.findAll({
+      where: { adminId }
+    });
+
+    if (!permissions || permissions.length === 0) {
+      return res.status(404).json({ message: 'No permissions found for this admin' });
+    }
+
+    res.json({
+      success: true,
+      adminId,
+      permissions
+    });
+  } catch (error) {
+    console.error('Error fetching permissions:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 
 
 // 🔐 Admin Login
