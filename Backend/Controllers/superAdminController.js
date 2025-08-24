@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
       expiresIn: '7d'
     });
 
-    res.json({ message: 'Login successful', token, admin.id });
+    res.json({ message: 'Login successful', token, admin });
   } catch (err) {
     res.status(500).json({ message: 'Login error', error: err.message });
   }
