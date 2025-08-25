@@ -554,7 +554,7 @@ exports.bulkUploadLaknam = async (req, res) => {
 exports.createJoinPost = async (req, res) => {
   try {
     const { JoinId, description, postId } = req.body;
-    const adminId = req.user.id;
+    const adminId = req.admin.id;
     const post = await Join.create({ JoinId, description, postId, adminId });
     res.json(post);
   } catch (err) {
