@@ -56,7 +56,7 @@ router.post('/laknam',
   authenticateAdmin,
   (req, res, next) => {
     req.body.moduleName = 'Laknam';
-    req.body.moduleId = req.body.laknamId;
+    req.body.moduleId = req.body.LaknamId;
     next();
   },
   checkModulePermission,
