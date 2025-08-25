@@ -3,14 +3,24 @@ const Giraham = require('../Models/Giraham');
 // ➕ Create Giraham
 exports.createGiraham = async (req, res) => {
   try {
+    const { girahamId, description } = req.body;
+    const adminId = req.admin.id;
+
     const giraham = await Giraham.create({
-      description: req.body.description
+      girahamId,     // ✅ foreign key / module ID
+      description,   // ✅ content
+      adminId        // ✅ who created it
     });
+
     res.status(201).json(giraham);
   } catch (error) {
-    res.status(500).json({ message: "Error creating Giraham", error: error.message });
+    res.status(500).json({ 
+      message: "Error creating Giraham", 
+      error: error.message 
+    });
   }
 };
+
 
 // 📄 Get All Giraham
 exports.getAllGirahams = async (req, res) => {
