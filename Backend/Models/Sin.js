@@ -6,7 +6,7 @@ const Sin = sequelize.define('Sin', {
   postId: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    allowNull: false
+    primaryKey: true   // ✅ make it primaryKey
   },
   adminId: {
     type: DataTypes.INTEGER,
@@ -20,6 +20,9 @@ const Sin = sequelize.define('Sin', {
     type: DataTypes.INTEGER,
     allowNull: false
   }
+}, {
+  tableName: 'sins',
+  timestamps: true
 });
 
 module.exports = Sin;
