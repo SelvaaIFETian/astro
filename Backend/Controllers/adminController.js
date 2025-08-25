@@ -396,18 +396,26 @@ exports.bulkUploadStar = async (req, res) => {
 };
 
 
-  exports.createLaknamPost = async (req, res) => {
-    try {
-      const { LaknamId, content, type } = req.body;
-      const adminId = req.admin.id;
-      const moduleName = 'laknam';
+exports.createLaknamPost = async (req, res) => {
+  try {
+    const { LaknamId, content, type } = req.body;
+    const adminId = req.admin.id;
 
-      const post = await Laknam.create({LaknamId, content, type, adminId });
-      res.status(201).json(post);
-    } catch (err) {
-      res.status(500).json({ message: 'Error creating Laknam post', error: err.message });
-    }
-  };
+    const post = await Laknam.create({
+      LaknamId,
+      content,
+      type,
+      adminId
+    });
+
+    res.status(201).json(post);
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Error creating Laknam post', 
+      error: err.message 
+    });
+  }
+};
 
   exports.getLaknamPostsByAdminId = async (req, res) => {
   try {
