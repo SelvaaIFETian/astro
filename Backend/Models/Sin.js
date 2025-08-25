@@ -4,7 +4,8 @@ const sequelize = require('../db');
 
 const Sin = sequelize.define('Sin', {
   postId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
     allowNull: false
   },
   adminId: {
@@ -16,7 +17,7 @@ const Sin = sequelize.define('Sin', {
     allowNull: false
   },
   sinId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: false
   }
 });
