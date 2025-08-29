@@ -74,54 +74,47 @@ exports.deleteGiraham = async (req, res) => {
 
 
 exports.bulkUploadGiraham = async (req, res) => {
-  const form = new IncomingForm({ multiples: false });
-
-  form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ message: 'File parsing error' });
-
-    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
-    if (!file) return res.status(400).json({ message: 'No Excel file uploaded' });
-
-    try {
-      const workbook = XLSX.readFile(file.filepath);
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet);
-
-      const adminId = req.admin.id;  // ✅ same as createGiraham
-      const success = [], failed = [];
-
-      for (const row of rows) {
-        const { girahamId, description } = row;
-
-        if (!girahamId || girahamId < 1 || !description) {
-          failed.push({ row, reason: 'Invalid data' });
-          continue;
-        }
-
-        try {
-          const girahamPost = await Giraham.create({
-            girahamId,
-            description,
-            adminId
-          });
-          success.push(girahamPost);
-        } catch (err) {
-          failed.push({ row, reason: 'DB Error' });
-        }
-      }
-
-      return res.status(200).json({
-        message: 'Bulk upload completed',
-        successCount: success.length,
-        failedCount: failed.length,
-        failed,
-      });
-
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Error processing Excel file' });
+  try {
+    // ✅ Extract token from headers
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized: token missing" });
     }
-  });
+
+    // ✅ Decode token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const adminId = decoded.id;  // store in DB
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // ✅ Convert Excel file to JSON
+    const result = excelToJson({
+      sourceFile: req.file.path,
+      header: { rows: 1 },
+      columnToKey: { A: "girahamId", B: "description" }
+    });
+
+    const girahamData = result.Sheet1;
+
+    // ✅ Save to DB with adminId
+    const girahams = await Giraham.bulkCreate(
+      girahamData.map(row => ({
+        girahamId: row.girahamId,
+        description: row.description,
+        adminId
+      }))
+    );
+
+    fs.unlinkSync(req.file.path); // cleanup
+    res.status(201).json({ message: "Bulk upload successful", girahams });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error processing Excel file",
+      error: error.message
+    });
+  }
 };
 
 
