@@ -75,45 +75,38 @@ exports.deleteGiraham = async (req, res) => {
 
 exports.bulkUploadGiraham = async (req, res) => {
   try {
-    // ✅ Extract token from headers
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized: token missing" });
-    }
+    const adminId = req.admin?.id; // comes from authenticateAdmin middleware
 
-    // ✅ Decode token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const adminId = decoded.id;  // store in DB
+    if (!adminId) {
+      return res.status(401).json({ message: "Unauthorized: admin not found" });
+    }
 
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // ✅ Convert Excel file to JSON
-    const result = excelToJson({
-      sourceFile: req.file.path,
-      header: { rows: 1 },
-      columnToKey: { A: "girahamId", B: "description" }
-    });
+    // Read Excel file
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    const girahamData = result.Sheet1;
+    if (!sheetData.length) {
+      return res.status(400).json({ message: "Excel file is empty" });
+    }
 
-    // ✅ Save to DB with adminId
-    const girahams = await Giraham.bulkCreate(
-      girahamData.map(row => ({
-        girahamId: row.girahamId,
-        description: row.description,
-        adminId
-      }))
-    );
+    // Add adminId to every record
+    const girahams = sheetData.map(item => ({
+      name: item.name,
+      description: item.description,
+      adminId
+    }));
 
-    fs.unlinkSync(req.file.path); // cleanup
-    res.status(201).json({ message: "Bulk upload successful", girahams });
+    // Insert into DB
+    await Giraham.bulkCreate(girahams);
+
+    res.status(201).json({ message: "Bulk upload successful", count: girahams.length });
   } catch (error) {
-    res.status(500).json({
-      message: "Error processing Excel file",
-      error: error.message
-    });
+    res.status(500).json({ message: "Error processing Excel file", error: error.message });
   }
 };
 
