@@ -99,7 +99,7 @@ exports.bulkUploadGiraham = async (req, res) => {
       const failed = [];
 
       for (const row of rows) {
-        const { name, description, significance } = row; // 👈 adjust fields from Giraham model
+        const { name, description } = row; // 👈 adjust fields from Giraham model
 
         // Validation (basic check – you can extend)
         if (!name || !description) {
@@ -111,7 +111,6 @@ exports.bulkUploadGiraham = async (req, res) => {
           const girahamPost = await Giraham.create({
             name,
             description,
-            significance: significance || null,
             adminId
           });
           success.push(girahamPost);
