@@ -75,33 +75,36 @@ exports.deleteGiraham = async (req, res) => {
 };
 
 // 📥 Bulk Upload
+
+const Giraham = require('../models/Giraham'); // adjust path to your model
+
 exports.bulkUploadGiraham = async (req, res) => {
-  const form = new IncomingForm({ multiples: false });
+  const form = new IncomingForm({ multiples: false, keepExtensions: true });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      return res.status(500).json({ message: 'File parsing error' });
+      return res.status(500).json({ message: 'File parsing error', error: err.message });
     }
 
     const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
 
     if (!file) {
-      return res.status(400).json({ message: 'No Excel file uploaded' });
+      return res.status(400).json({ message: 'No Excel file uploaded. Please upload a file named "excel".' });
     }
 
     try {
+      // Read Excel file
       const workbook = XLSX.readFile(file.filepath);
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet);
 
-      const adminId = req.admin.id;
+      const adminId = req.admin?.id || null; // ensure admin ID is attached from auth middleware
       const success = [];
       const failed = [];
 
       for (const row of rows) {
-        const { name, description } = row; // 👈 adjust fields from Giraham model
+        const { name, description } = row; // Adjust column names in your Excel file
 
-        // Validation (basic check – you can extend)
         if (!name || !description) {
           failed.push({ row, reason: 'Missing required fields' });
           continue;
@@ -114,8 +117,8 @@ exports.bulkUploadGiraham = async (req, res) => {
             adminId
           });
           success.push(girahamPost);
-        } catch (err) {
-          failed.push({ row, reason: 'DB Error' });
+        } catch (dbErr) {
+          failed.push({ row, reason: 'DB Error: ' + dbErr.message });
         }
       }
 
@@ -127,10 +130,9 @@ exports.bulkUploadGiraham = async (req, res) => {
       });
 
     } catch (err) {
-      console.error(err);
-      console.log('Uploaded File:', files.excel);
-
-      return res.status(500).json({ message: 'Error processing Excel file' });
+      console.error('Excel Processing Error:', err);
+      return res.status(500).json({ message: 'Error processing Excel file', error: err.message });
     }
   });
 };
+
