@@ -74,42 +74,62 @@ exports.deleteGiraham = async (req, res) => {
 
 // 📥 Bulk Upload
 exports.bulkUploadGiraham = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+  const form = new IncomingForm({ multiples: false });
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
     }
 
-    const adminId = req.admin.id; // from middleware auth
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
 
-    // Parse Excel
-    const workbook = XLSX.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-    if (!sheetData || sheetData.length === 0) {
-      return res.status(400).json({ message: "Excel file is empty" });
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
     }
 
-    // Validate & prepare records
-    const records = sheetData.map(row => ({
-      girahamId: row.girahamId,
-      description: row.description,
-      adminId: adminId
-    }));
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
 
-    // Insert into DB
-    const girahams = await Giraham.bulkCreate(records);
+      const adminId = req.admin.id;
+      const success = [];
+      const failed = [];
 
-    res.status(201).json({
-      message: "Giraham bulk upload successful",
-      count: girahams.length,
-      girahams
-    });
+      for (const row of rows) {
+        const { name, description, significance } = row; // 👈 adjust fields from Giraham model
 
-  } catch (error) {
-    res.status(500).json({
-      message: "Error processing Excel file",
-      error: error.message
-    });
-  }
+        // Validation (basic check – you can extend)
+        if (!name || !description) {
+          failed.push({ row, reason: 'Missing required fields' });
+          continue;
+        }
+
+        try {
+          const girahamPost = await Giraham.create({
+            name,
+            description,
+            significance: significance || null,
+            adminId
+          });
+          success.push(girahamPost);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      console.log('Uploaded File:', files.excel);
+
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
 };

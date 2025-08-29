@@ -25,10 +25,6 @@ router.put('/:id', girahamController.updateGiraham);
 router.delete('/:id', girahamController.deleteGiraham);
 
 // Bulk Upload Girahams (Excel)
-router.post(
-  '/bulk-upload',
-  authenticateAdmin,
-  upload.single('file'),   // 👈 expects Excel file under key 'file'
-  girahamController.bulkUploadGiraham
-);
+router.post('/bulk-upload-giraham', adminController.bulkUploadGiraham);
+
 module.exports = router;
