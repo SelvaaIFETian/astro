@@ -19,5 +19,6 @@ router.get('/', girahamController.getAllGirahams);
 router.get('/:id', girahamController.getGirahamById);
 router.put('/:id', girahamController.updateGiraham);
 router.delete('/:id', girahamController.deleteGiraham);
+router.post('/bulk-upload', girahamController.bulkUploadGiraham);
 
 module.exports = router;
