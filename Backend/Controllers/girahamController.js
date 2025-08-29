@@ -89,7 +89,13 @@ exports.bulkUploadGiraham = async (req, res) => {
     }
 
     try {
-      const workbook = XLSX.readFile(file.filepath);
+      console.log("Uploaded File Object:", file); // 👀 helps debugging
+      const filePath = file.filepath || file.path; // support both formidable versions
+      if (!filePath) {
+        return res.status(400).json({ message: 'File path not found' });
+      }
+
+      const workbook = XLSX.readFile(filePath);
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet);
 
@@ -100,7 +106,6 @@ exports.bulkUploadGiraham = async (req, res) => {
       for (const row of rows) {
         const { girahamId, description } = row;
 
-        // Validation checks
         if (!girahamId || girahamId < 1 || !description) {
           failed.push({ row, reason: 'Invalid data' });
           continue;
@@ -126,7 +131,7 @@ exports.bulkUploadGiraham = async (req, res) => {
       });
 
     } catch (err) {
-      console.error(err);
+      console.error("Excel processing error:", err);
       console.log('Uploaded File:', files.excel);
 
       return res.status(500).json({ message: 'Error processing Excel file' });
