@@ -74,9 +74,7 @@ exports.deleteGiraham = async (req, res) => {
   }
 };
 
-// 📥 Bulk Upload
 
-const Giraham = require('../models/Giraham'); // adjust path to your model
 
 exports.bulkUploadGiraham = async (req, res) => {
   const form = new IncomingForm({ multiples: false, keepExtensions: true });
