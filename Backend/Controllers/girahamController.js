@@ -1,6 +1,7 @@
-const Giraham = require('../Models/Giraham');
-const { IncomingForm } = require('formidable');
+const fs = require('fs');
+const path = require('path');
 const XLSX = require('xlsx');
+const Giraham = require('../Models/Giraham');
 
 // ➕ Create Giraham
 exports.createGiraham = async (req, res) => {
@@ -16,13 +17,12 @@ exports.createGiraham = async (req, res) => {
 
     res.status(201).json(giraham);
   } catch (error) {
-    res.status(500).json({ 
-      message: "Error creating Giraham", 
-      error: error.message 
+    res.status(500).json({
+      message: "Error creating Giraham",
+      error: error.message
     });
   }
 };
-
 
 // 📄 Get All Giraham
 exports.getAllGirahams = async (req, res) => {
@@ -72,11 +72,10 @@ exports.deleteGiraham = async (req, res) => {
   }
 };
 
-
+// 📥 Bulk Upload
 exports.bulkUploadGiraham = async (req, res) => {
   try {
-    const adminId = req.admin?.id; // comes from authenticateAdmin middleware
-
+    const adminId = req.admin?.id; // ✅ from authenticateAdmin
     if (!adminId) {
       return res.status(401).json({ message: "Unauthorized: admin not found" });
     }
@@ -86,30 +85,35 @@ exports.bulkUploadGiraham = async (req, res) => {
     }
 
     // Read Excel file
-    const workbook = xlsx.readFile(req.file.path);
+    const workbook = XLSX.readFile(req.file.path);
     const sheetName = workbook.SheetNames[0];
-    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
     if (!sheetData.length) {
       return res.status(400).json({ message: "Excel file is empty" });
     }
 
-    // Add adminId to every record
+    // Map Excel data -> DB format
     const girahams = sheetData.map(item => ({
-      name: item.name,
-      description: item.description,
-      adminId
+      girahamId: item.girahamId,      // ✅ match createGiraham
+      description: item.description,  // ✅ description
+      adminId                         // ✅ from auth
     }));
 
     // Insert into DB
     await Giraham.bulkCreate(girahams);
 
-    res.status(201).json({ message: "Bulk upload successful", count: girahams.length });
+    // cleanup uploaded file
+    fs.unlinkSync(req.file.path);
+
+    res.status(201).json({
+      message: "Bulk upload successful",
+      count: girahams.length
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error processing Excel file", error: error.message });
+    res.status(500).json({
+      message: "Error processing Excel file",
+      error: error.message
+    });
   }
 };
-
-
-
-

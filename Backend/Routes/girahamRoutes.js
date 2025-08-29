@@ -3,6 +3,8 @@ const router = express.Router();
 const girahamController = require('../Controllers/girahamController');
 const { authenticateAdmin } = require('../Middleware/adminMiddleware');
 const checkModulePermission = require('../Middleware/checkModulePermission');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' }); // temp folder
 
 // Create Single Giraham
 router.post('/giraham',
@@ -23,15 +25,10 @@ router.put('/:id', girahamController.updateGiraham);
 router.delete('/:id', girahamController.deleteGiraham);
 
 // Bulk Upload Girahams (Excel)
-router.post('/bulk-upload',
-  authenticateAdmin,   // ✅ Ensure admin authentication
-  (req, res, next) => {
-    req.body.moduleName = 'Giraham';
-    req.body.moduleId = 'bulk'; // ✅ Pass static/module identifier
-    next();
-  },
-  checkModulePermission,  // ✅ Permission check just like single create
+router.post(
+  '/bulk-upload',
+  authenticateAdmin,
+  upload.single('file'),   // 👈 expects Excel file under key 'file'
   girahamController.bulkUploadGiraham
 );
-
 module.exports = router;
