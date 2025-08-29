@@ -89,8 +89,7 @@ exports.bulkUploadGiraham = async (req, res) => {
     }
 
     try {
-      console.log("Uploaded File Object:", file); // 👀 helps debugging
-      const filePath = file.filepath || file.path; // support both formidable versions
+      const filePath = file.filepath || file.path; 
       if (!filePath) {
         return res.status(400).json({ message: 'File path not found' });
       }
@@ -106,20 +105,31 @@ exports.bulkUploadGiraham = async (req, res) => {
       for (const row of rows) {
         const { girahamId, description } = row;
 
+        // 🔹 Validation like create method
         if (!girahamId || girahamId < 1 || !description) {
-          failed.push({ row, reason: 'Invalid data' });
+          failed.push({ row, reason: 'Invalid data (missing girahamId/description)' });
           continue;
         }
 
         try {
+          // 🔹 Uniqueness check like in create method
+          const exists = await Giraham.findOne({ where: { girahamId } });
+          if (exists) {
+            failed.push({ row, reason: 'Giraham with this girahamId already exists' });
+            continue;
+          }
+
+          // 🔹 Create post
           const girahamPost = await Giraham.create({
             girahamId,
             description,
             adminId
           });
+
           success.push(girahamPost);
-        } catch (err) {
-          failed.push({ row, reason: 'DB Error' });
+
+        } catch (error) {
+          failed.push({ row, reason: 'Database error', error: error.message });
         }
       }
 
@@ -127,15 +137,15 @@ exports.bulkUploadGiraham = async (req, res) => {
         message: 'Bulk upload completed',
         successCount: success.length,
         failedCount: failed.length,
+        success,
         failed,
       });
 
     } catch (err) {
       console.error("Excel processing error:", err);
-      console.log('Uploaded File:', files.excel);
-
       return res.status(500).json({ message: 'Error processing Excel file' });
     }
   });
 };
+
 
