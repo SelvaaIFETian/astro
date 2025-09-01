@@ -74,49 +74,52 @@ exports.deleteGiraham = async (req, res) => {
   }
 };
 
-
-
-exports.bulkUploadGiraham = async (req, res) => {
-  const form = new IncomingForm({ multiples: false, keepExtensions: true });
+exports.bulkUploadGiraham= async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
 
   form.parse(req, async (err, fields, files) => {
     if (err) {
-      return res.status(500).json({ message: 'File parsing error', error: err.message });
+      return res.status(500).json({ message: 'File parsing error' });
     }
 
     const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
 
     if (!file) {
-      return res.status(400).json({ message: 'No Excel file uploaded. Please upload a file named "excel".' });
+      return res.status(400).json({ message: 'No Excel file uploaded' });
     }
 
     try {
-      // Read Excel file
       const workbook = XLSX.readFile(file.filepath);
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(sheet);
 
-      const adminId = req.admin?.id || null; // ensure admin ID is attached from auth middleware
+      const adminId = req.admin.id;
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
       const success = [];
       const failed = [];
 
       for (const row of rows) {
-        const { name, description } = row; // Adjust column names in your Excel file
+        const { girahamId, description } = row;
 
-        if (!name || !description) {
-          failed.push({ row, reason: 'Missing required fields' });
+        if (
+          !girahamId || girahamId < 1 || girahamId > 12 ||
+          !content ||
+          (type && !validTypes.includes(type))
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
           continue;
         }
 
         try {
-          const girahamPost = await Giraham.create({
-            name,
+         
+          const girahamPost = await Raasi.create({
+            girahamId,
             description,
             adminId
           });
-          success.push(girahamPost);
-        } catch (dbErr) {
-          failed.push({ row, reason: 'DB Error: ' + dbErr.message });
+          success.push(raasiPost);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
         }
       }
 
@@ -128,9 +131,12 @@ exports.bulkUploadGiraham = async (req, res) => {
       });
 
     } catch (err) {
-      console.error('Excel Processing Error:', err);
-      return res.status(500).json({ message: 'Error processing Excel file', error: err.message });
+      console.error(err);
+      console.log('Uploaded File:', files.excel);
+
+      return res.status(500).json({ message: 'Error processing Excel file' });
     }
   });
 };
+
 

@@ -1,14 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const bookmarkController = require('../Controllers/bookmarkController');
+const controller = require('../controllers/bookmarkController');
 
-router.post('/', bookmarkController.createBookmark);
-router.post('/bookmark/slot/add-post', bookmarkController.addPostToSlot);
+// Create
+router.post('/', controller.createBookmark);
 
-router.delete('/:id', bookmarkController.deleteBookmark);
-router.get('/bookmark/:id/post', bookmarkController.getPostFromBookmark);
-router.get('/bookmarks', bookmarkController.getAllBookmarks);
-router.get('/bookmarks/:bookmarkId/slots', bookmarkController.getSlotsByBookmarkId);
+// Get
+router.get('/id/:id', controller.getById);
+router.get('/name/:name', controller.getByName);
+router.get('/part/:part', controller.getByPart);
 
+router.get('/all/ids', controller.getAllId);
+router.get('/all/names', controller.getAllName);
+router.get('/all/parts', controller.getAllPart);
+
+// Delete
+router.delete('/id/:id', controller.deleteById);
+router.delete('/name/:name', controller.deleteByName);
+router.delete('/part/:part', controller.deleteByPart);
+
+// Update
+router.put('/:id', controller.updateBookmark);
 
 module.exports = router;

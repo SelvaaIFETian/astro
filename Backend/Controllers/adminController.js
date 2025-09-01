@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const Raasi = require('../Models/Raasi');
 const Star = require('../Models/Star');
 const Laknam =require('../Models/Laknam');
-const Join = require('../Models/Join'); // Adjust the path as needed
+const Join = require('../Models/Join'); 
 const ThreeJoin = require('../Models/ThreeJoin');
 const Sin = require('../Models/Sin');
 const Thosham = require('../Models/Thosham');
@@ -42,8 +42,6 @@ exports.getPermissionsByAdminId = async (req, res) => {
   }
 };
 
-
-// 🔐 Admin Login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -70,7 +68,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
 
 exports.requestAccess = async (req, res) => {
   try {
@@ -106,7 +103,6 @@ exports.createRaasiPost = async (req, res) => {
   }
 };
 
-// Delete Post
 exports.deleteRaasiPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -120,7 +116,6 @@ exports.deleteRaasiPost = async (req, res) => {
   }
 };
 
-// Update Post
 exports.updateRaasiPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -135,7 +130,6 @@ exports.updateRaasiPost = async (req, res) => {
   }
 };
 
-// Get All Posts
 exports.getAllRaasiPosts = async (req, res) => {
   try {
     const posts = await Raasi.findAll();
@@ -155,7 +149,6 @@ exports.getRaasiPostsByAdminId = async (req, res) => {
   }
 };
 
-// Get Post by Post ID
 exports.getRaasiPostByPostId = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -169,7 +162,6 @@ exports.getRaasiPostByPostId = async (req, res) => {
   }
 };
 
-// Get Posts by Raasi ID
 exports.getRaasiPostsByRaasiId = async (req, res) => {
   try {
     const { raasiId } = req.params;
@@ -247,7 +239,6 @@ exports.bulkUploadRaasi = async (req, res) => {
   });
 };
 
-
 exports.createStarPost = async (req, res) => {
   try {
     const { starId, description, type } = req.body;
@@ -270,8 +261,6 @@ exports.getStarPostsByAdminId = async (req, res) => {
   }
 };
 
-
-// 🗑️ Delete
 exports.deleteStarPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -283,7 +272,6 @@ exports.deleteStarPost = async (req, res) => {
   }
 };
 
-// ✏️ Update
 exports.updateStarPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -301,7 +289,6 @@ exports.updateStarPost = async (req, res) => {
   }
 };
 
-// 🔍 Get All
 exports.getAllStarPosts = async (req, res) => {
   try {
     const posts = await Star.findAll();
@@ -311,7 +298,6 @@ exports.getAllStarPosts = async (req, res) => {
   }
 };
 
-// 🔍 Get by Post ID
 exports.getStarPostByPostId = async (req, res) => {
   try {
     const post = await Star.findOne({ where: { postId: req.params.postId } });
@@ -322,7 +308,6 @@ exports.getStarPostByPostId = async (req, res) => {
   }
 };
 
-// 🔍 Get by Star ID
 exports.getStarPostsByStarId = async (req, res) => {
   try {
     const posts = await Star.findAll({ where: { starId: req.params.starId } });
@@ -395,7 +380,6 @@ exports.bulkUploadStar = async (req, res) => {
   });
 };
 
-
 exports.createLaknamPost = async (req, res) => {
   try {
     const { LaknamId, content, type } = req.body;
@@ -417,7 +401,7 @@ exports.createLaknamPost = async (req, res) => {
   }
 };
 
-  exports.getLaknamPostsByAdminId = async (req, res) => {
+exports.getLaknamPostsByAdminId = async (req, res) => {
   try {
     const adminId = req.admin.id;
     const posts = await Laknam.findAll({ where: { adminId } });
@@ -427,8 +411,6 @@ exports.createLaknamPost = async (req, res) => {
   }
 };
 
-
-// 🗑️ Delete
 exports.deleteLaknamPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -440,7 +422,6 @@ exports.deleteLaknamPost = async (req, res) => {
   }
 };
 
-// ✏️ Update
 exports.updateLaknamPost = async (req, res) => {
   try {
     const { postId } = req.params;
@@ -458,7 +439,6 @@ exports.updateLaknamPost = async (req, res) => {
   }
 };
 
-// 🔍 Get All
 exports.getAllLaknamPosts = async (req, res) => {
   try {
     const posts = await Laknam.findAll();
@@ -468,7 +448,6 @@ exports.getAllLaknamPosts = async (req, res) => {
   }
 };
 
-// 🔍 Get by Post ID
 exports.getLaknamPostByPostId = async (req, res) => {
   try {
     const post = await Laknam.findOne({ where: { postId: req.params.postId } });
@@ -479,7 +458,6 @@ exports.getLaknamPostByPostId = async (req, res) => {
   }
 };
 
-// 🔍 Get by Star ID
 exports.getLaknamPostsByLaknamId = async (req, res) => {
   try {
     const posts = await Laknam.findAll({ where: { LaknamId: req.params.laknamId } });
@@ -488,6 +466,7 @@ exports.getLaknamPostsByLaknamId = async (req, res) => {
     res.status(500).json({ message: 'Error fetching posts by starId', error: err.message });
   }
 };
+
 exports.bulkUploadLaknam = async (req, res) => {
   const form = new IncomingForm({ multiples: false });
 
@@ -550,7 +529,6 @@ exports.bulkUploadLaknam = async (req, res) => {
   });
 };
 
-
 exports.createJoinPost = async (req, res) => {
   try {
     const { JoinId, description, postId } = req.body;
@@ -561,6 +539,7 @@ exports.createJoinPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Join post', error: err.message });
   }
 };
+
 exports.getJoinPostsByAdminId = async (req, res) => {
   try {
      const adminId = req.admin.id;
@@ -571,8 +550,6 @@ exports.getJoinPostsByAdminId = async (req, res) => {
   }
 };
 
-
-// Get All Join Posts
 exports.getAllJoinPosts = async (req, res) => {
   try {
     const posts = await Join.findAll();
@@ -582,7 +559,6 @@ exports.getAllJoinPosts = async (req, res) => {
   }
 };
 
-// Get Join Post by PostId
 exports.getJoinPostByPostId = async (req, res) => {
   try {
     const post = await Join.findOne({ where: { postId: req.params.postId } });
@@ -592,7 +568,6 @@ exports.getJoinPostByPostId = async (req, res) => {
   }
 };
 
-// Get Join Posts by JoinId
 exports.getJoinPostsByJoinId = async (req, res) => {
   try {
     const posts = await Join.findAll({ where: { JoinId: req.params.JoinId } });
@@ -602,7 +577,6 @@ exports.getJoinPostsByJoinId = async (req, res) => {
   }
 };
 
-// Update Join Post
 exports.updateJoinPost = async (req, res) => {
   try {
     const updated = await Join.update(req.body, {
@@ -614,7 +588,6 @@ exports.updateJoinPost = async (req, res) => {
   }
 };
 
-// Delete Join Post
 exports.deleteJoinPost = async (req, res) => {
   try {
     await Join.destroy({ where: { postId: req.params.postId } });
@@ -686,7 +659,6 @@ exports.bulkUploadJoin = async (req, res) => {
   });
 };
 
-// CREATE ThreeJoin Post
 exports.createThreeJoinPost = async (req, res) => {
   try {
     const { postId, description, JoinId,adminId } = req.body;
@@ -698,7 +670,6 @@ exports.createThreeJoinPost = async (req, res) => {
   }
 };
 
-// GET All ThreeJoin Posts
 exports.getAllThreeJoinPosts = async (req, res) => {
   try {
     const posts = await ThreeJoin.findAll();
@@ -708,7 +679,6 @@ exports.getAllThreeJoinPosts = async (req, res) => {
   }
 };
 
-// GET ThreeJoin Post by Post ID
 exports.getThreeJoinPostByPostId = async (req, res) => {
   try {
     const post = await ThreeJoin.findOne({ where: { postId: req.params.postId } });
@@ -718,7 +688,6 @@ exports.getThreeJoinPostByPostId = async (req, res) => {
   }
 };
 
-// GET Posts by threeJoinId
 exports.getThreeJoinPostsByThreeJoinId = async (req, res) => {
   try {
     const posts = await ThreeJoin.findAll({ where: { JoinId: req.params.threeJoinId } });
@@ -728,7 +697,6 @@ exports.getThreeJoinPostsByThreeJoinId = async (req, res) => {
   }
 };
 
-// UPDATE ThreeJoin Post
 exports.updateThreeJoinPost = async (req, res) => {
   try {
     const post = await ThreeJoin.update(req.body, { where: { JoinId: req.params.postId } });
@@ -738,7 +706,6 @@ exports.updateThreeJoinPost = async (req, res) => {
   }
 };
 
-// DELETE ThreeJoin Post
 exports.deleteThreeJoinPost = async (req, res) => {
   try {
     await ThreeJoin.destroy({ where: { JoinId: req.params.postId } });
@@ -761,6 +728,7 @@ exports.createSinPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Sin post', error: error.message });
   }
 };
+
 exports.getSinPostsByAdminId = async (req, res) => {
   try {
  const adminId = req.admin.id;
@@ -771,8 +739,6 @@ exports.getSinPostsByAdminId = async (req, res) => {
   }
 };
 
-
-// Get all Sin posts
 exports.getAllSinPosts = async (req, res) => {
   try {
     const posts = await Sin.findAll();
@@ -782,7 +748,6 @@ exports.getAllSinPosts = async (req, res) => {
   }
 };
 
-// Get Sin post by postId
 exports.getSinPostByPostId = async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -793,7 +758,6 @@ exports.getSinPostByPostId = async (req, res) => {
   }
 };
 
-// Get Sin posts by sinId
 exports.getSinPostsBySinId = async (req, res) => {
   try {
     const sinId = req.params.sinId;
@@ -804,7 +768,6 @@ exports.getSinPostsBySinId = async (req, res) => {
   }
 };
 
-// Update Sin post
 exports.updateSinPost = async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -816,7 +779,6 @@ exports.updateSinPost = async (req, res) => {
   }
 };
 
-// Delete Sin post
 exports.deleteSinPost = async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -837,7 +799,6 @@ exports.createThosham = async (req, res) => {
   }
 };
 
-// 📄 Get All Thosham
 exports.getAllThosham = async (req, res) => {
   try {
     const data = await Thosham.findAll();
@@ -847,7 +808,6 @@ exports.getAllThosham = async (req, res) => {
   }
 };
 
-// 🔍 Get Thosham by ID
 exports.getThoshamById = async (req, res) => {
   try {
     const thosham = await Thosham.findByPk(req.params.id);
@@ -858,7 +818,6 @@ exports.getThoshamById = async (req, res) => {
   }
 };
 
-// 🖊️ Update Thosham
 exports.updateThosham = async (req, res) => {
   try {
     const { description } = req.body;
@@ -872,7 +831,6 @@ exports.updateThosham = async (req, res) => {
   }
 };
 
-// ❌ Delete Thosham
 exports.deleteThosham = async (req, res) => {
   try {
     const thosham = await Thosham.findByPk(req.params.id);
@@ -884,3 +842,4 @@ exports.deleteThosham = async (req, res) => {
     res.status(500).json({ message: 'Error deleting Thosham', error: error.message });
   }
 };
+
