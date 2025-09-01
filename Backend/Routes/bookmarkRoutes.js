@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/bookmarkController');
+const controller = require('../Controllers/bookmarkController');
 
 // Create
 router.post('/', controller.createBookmark);
