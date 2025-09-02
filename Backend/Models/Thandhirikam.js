@@ -10,6 +10,10 @@ const Thandhirikam = sequelize.define('Thandhirikam', {
   description: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
   }
 }, {
   tableName: 'thandhirikams',

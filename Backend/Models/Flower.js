@@ -10,7 +10,11 @@ const Flower = sequelize.define('Flower', {
   description: {
     type: DataTypes.TEXT,
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 });
 
 module.exports = Flower;

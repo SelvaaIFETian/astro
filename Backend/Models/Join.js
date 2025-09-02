@@ -17,7 +17,11 @@ const Join = sequelize.define('Join', {
   adminId: {
     type: DataTypes.INTEGER,
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 });
 
 module.exports = Join;

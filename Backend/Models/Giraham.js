@@ -18,7 +18,11 @@ const Giraham = sequelize.define('Giraham', {
   description: {
     type: DataTypes.TEXT,  // better to allow longer content
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 }, {
   tableName: 'girahams',
   timestamps: true

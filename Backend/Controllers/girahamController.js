@@ -8,13 +8,13 @@ const { IncomingForm } = require('formidable');
 // ➕ Create Giraham
 exports.createGiraham = async (req, res) => {
   try {
-    const { girahamId, description } = req.body;
+    const { girahamId, description,type } = req.body;
     const adminId = req.admin.id;
 
     const giraham = await Giraham.create({
       girahamId,     // ✅ foreign key / module ID
       description,   // ✅ content
-      adminId        // ✅ who created it
+      adminId ,type       // ✅ who created it
     });
 
     res.status(201).json(giraham);

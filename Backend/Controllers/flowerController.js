@@ -3,8 +3,8 @@ const Flower = require('../Models/Flower');
 // Create
 exports.createFlower = async (req, res) => {
   try {
-    const { description } = req.body;
-    const flower = await Flower.create({ description });
+    const { description,type } = req.body;
+    const flower = await Flower.create({ description,type });
     res.json(flower);
   } catch (error) {
     res.status(500).json({ message: 'Error creating Flower', error: error.message });

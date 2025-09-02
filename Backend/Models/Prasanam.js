@@ -10,7 +10,11 @@ const Prasanam = sequelize.define('Prasanam', {
   description: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 }, {
   tableName: 'prasanams',
   timestamps: true

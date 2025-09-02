@@ -4,7 +4,7 @@ const Thandhirikam = require('../Models/Thandhirikam');
 exports.createThandhirikam = async (req, res) => {
   try {
     const thandhirikam = await Thandhirikam.create({
-      description: req.body.description
+      description: req.body.description,type:req.body.type
     });
     res.status(201).json(thandhirikam);
   } catch (error) {

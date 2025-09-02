@@ -531,9 +531,9 @@ exports.bulkUploadLaknam = async (req, res) => {
 
 exports.createJoinPost = async (req, res) => {
   try {
-    const { JoinId, description, postId } = req.body;
+    const { JoinId, description, postId ,type} = req.body;
     const adminId = req.admin.id;
-    const post = await Join.create({ JoinId, description, postId, adminId });
+    const post = await Join.create({ JoinId, description, postId, adminId,type });
     res.json(post);
   } catch (err) {
     res.status(500).json({ message: 'Error creating Join post', error: err.message });
@@ -717,12 +717,12 @@ exports.deleteThreeJoinPost = async (req, res) => {
 
 exports.createSinPost = async (req, res) => {
   try {
-    const { postId, description ,sinId} = req.body;
+    const { postId, description ,sinId,type} = req.body;
     const adminId = req.admin.id;
      if (!postId || !adminId || !description || !sinId) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-    const post = await Sin.create({ postId, adminId, description, sinId });
+    const post = await Sin.create({ postId, adminId, description, sinId ,type});
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: 'Error creating Sin post', error: error.message });
@@ -791,8 +791,8 @@ exports.deleteSinPost = async (req, res) => {
 
 exports.createThosham = async (req, res) => {
   try {
-    const { description } = req.body;
-    const thosham = await Thosham.create({ description });
+    const { description ,type} = req.body;
+    const thosham = await Thosham.create({ description,type });
     res.json(thosham);
   } catch (error) {
     res.status(500).json({ message: 'Error creating Thosham', error: error.message });

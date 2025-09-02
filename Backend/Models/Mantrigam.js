@@ -10,7 +10,11 @@ const Mantrigam = sequelize.define('Mantrigam', {
   description: {
     type: DataTypes.TEXT,
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 });
 
 module.exports = Mantrigam;

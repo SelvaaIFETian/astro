@@ -2,8 +2,8 @@ const  Mantrigam = require('../Models/Mantrigam');
 
 exports.createMantrigam = async (req, res) => {
   try {
-    const { description } = req.body;
-    const newMantrigam = await Mantrigam.create({ description });
+    const { description ,type} = req.body;
+    const newMantrigam = await Mantrigam.create({ description,type });
     res.json(newMantrigam);
   } catch (error) {
     res.status(500).json({ message: "Error creating Mantrigam", error: error.message });

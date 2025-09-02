@@ -19,7 +19,11 @@ const Sin = sequelize.define('Sin', {
   sinId: {
     type: DataTypes.INTEGER,
     allowNull: false
-  }
+  },
+  type: {
+    type: DataTypes.ENUM('Strong', 'Weak', 'Positive', 'Negative'),
+    allowNull: true
+  },
 }, {
   tableName: 'sins',
   timestamps: true

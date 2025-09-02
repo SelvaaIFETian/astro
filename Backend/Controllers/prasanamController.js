@@ -4,7 +4,7 @@ const Prasanam = require('../Models/Prasanam');
 exports.createPrasanam = async (req, res) => {
   try {
     const prasanam = await Prasanam.create({
-      description: req.body.description
+      description: req.body.description,type:req.body.type
     });
     res.status(201).json(prasanam);
   } catch (error) {
