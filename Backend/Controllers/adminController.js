@@ -427,7 +427,7 @@ exports.updateLaknamPost = async (req, res) => {
     const { postId } = req.params;
 
 
-    const updated = await Star.update(
+    const updated = await Laknam.update(
       req.body,
       { where: { id: postId } } 
     );
