@@ -619,9 +619,10 @@ exports.bulkUploadJoin = async (req, res) => {
       const adminId = req.admin.id;
       const success = [];
       const failed = [];
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
 
       for (const row of rows) {
-        const { JoinId, description, postId } = row;
+        const { JoinId, description, postId ,type} = row;
 
         if (
           !JoinId || typeof JoinId !== 'number' ||
@@ -638,6 +639,7 @@ exports.bulkUploadJoin = async (req, res) => {
             description,
             postId,
             adminId,
+            type: type || null
           });
           success.push(post);
         } catch (err) {
