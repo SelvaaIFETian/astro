@@ -429,7 +429,7 @@ exports.updateLaknamPost = async (req, res) => {
 
     const updated = await Star.update(
       req.body,
-      { where: { postId } }
+      { where: { id: postId } } 
     );
 
     if (updated[0]) return res.json({ message: 'Laknam post updated' });
