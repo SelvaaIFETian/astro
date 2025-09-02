@@ -425,10 +425,10 @@ exports.deleteLaknamPost = async (req, res) => {
 exports.updateLaknamPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const { LaknamId, description, type } = req.body;
+
 
     const updated = await Star.update(
-      { LaknamId, description, type },
+      req.body,
       { where: { postId } }
     );
 
