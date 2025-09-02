@@ -47,6 +47,16 @@ exports.getGirahamById = async (req, res) => {
   }
 };
 
+exports.getGirahamByGId = async (req, res) => {
+  try {
+    const giraham = await Giraham.findAll({where:{girahamId:req.params.id}});
+    if (!giraham) return res.status(404).json({ message: "Giraham not found" });
+    res.json(giraham);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching Giraham", error: error.message });
+  }
+};
+
 // ✏️ Update Giraham
 exports.updateGiraham = async (req, res) => {
   try {

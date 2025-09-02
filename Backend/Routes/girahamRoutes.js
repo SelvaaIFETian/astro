@@ -23,6 +23,7 @@ router.get('/', girahamController.getAllGirahams);
 router.get('/:id', girahamController.getGirahamById);
 router.put('/:id', girahamController.updateGiraham);
 router.delete('/:id', girahamController.deleteGiraham);
+router.get("/gid/:id",girahamController.getGirahamByGId);
 
 // Bulk Upload Girahams (Excel)
 router.post('/bulk-upload-giraham', girahamController.bulkUploadGiraham);
