@@ -730,7 +730,71 @@ exports.createSinPost = async (req, res) => {
     res.status(500).json({ message: 'Error creating Sin post', error: error.message });
   }
 };
+exports.bulkUploadSin = async (req, res) => {
+  const form = new IncomingForm({ multiples: false });
 
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(500).json({ message: 'File parsing error' });
+    }
+
+    const file = Array.isArray(files.excel) ? files.excel[0] : files.excel;
+
+    if (!file) {
+      return res.status(400).json({ message: 'No Excel file uploaded' });
+    }
+
+    try {
+      const workbook = XLSX.readFile(file.filepath);
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const adminId = req.admin.id;
+      const validTypes = ['Strong', 'Weak', 'Positive', 'Negative'];
+      const success = [];
+      const failed = [];
+
+      for (const row of rows) {
+        const { sinId, type, description } = row;
+
+        if (
+          !sinId || sinId < 1 || sinId > 12 ||
+          !description ||
+          (type && !validTypes.includes(type))
+        ) {
+          failed.push({ row, reason: 'Invalid data' });
+          continue;
+        }
+
+        try {
+         
+          const sinPost = await Sin.create({
+            sinId,
+            type: type || null,
+            description,
+            adminId
+          });
+          success.push(sinPost);
+        } catch (err) {
+          failed.push({ row, reason: 'DB Error' });
+        }
+      }
+
+      return res.status(200).json({
+        message: 'Bulk upload completed',
+        successCount: success.length,
+        failedCount: failed.length,
+        failed,
+      });
+
+    } catch (err) {
+      console.error(err);
+      console.log('Uploaded File:', files.excel);
+
+      return res.status(500).json({ message: 'Error processing Excel file' });
+    }
+  });
+};
 exports.getSinPostsByAdminId = async (req, res) => {
   try {
  const adminId = req.admin.id;

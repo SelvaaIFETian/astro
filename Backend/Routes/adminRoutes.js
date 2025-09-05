@@ -124,6 +124,7 @@ router.get('/sin', adminController.getAllSinPosts);
 router.get('/sin/post/:postId', adminController.getSinPostByPostId);
 router.get('/sin/sin/:sinId', adminController.getSinPostsBySinId);
 router.get('/sin/admin/adminId',authenticateAdmin,  adminController.getSinPostsByAdminId); // 🔍 added
+router.post('/sin/bulk-upload', authenticateAdmin, adminController.bulkUploadSin);
 
 // ===== Thosham =====
 router.post('/thosham',
