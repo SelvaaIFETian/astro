@@ -755,7 +755,7 @@ exports.bulkUploadSin = async (req, res) => {
       const failed = [];
 
       for (const row of rows) {
-        const { sinId, type, description } = row;
+        const { postId, type, description,sinId } = row;
 
         if (
           !sinId || sinId < 1 || sinId > 12 ||
@@ -769,6 +769,7 @@ exports.bulkUploadSin = async (req, res) => {
         try {
          
           const sinPost = await Sin.create({
+            postId,
             sinId,
             type: type || null,
             description,
